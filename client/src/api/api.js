@@ -4,6 +4,7 @@ import {
   USER_PROFILE_URL,
   GOALS_URL,
   TASKS_URL,
+  BUDGET_URL,
 } from './config';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
@@ -45,6 +46,18 @@ export const getGoals = async (userId) => {
   const response = await fetch(`${GOALS_URL}/${userId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch goals');
+  }
+  return response.json();
+};
+
+// Budget API functions
+export const getBudgetSummary = async (userId, date, currentMonth) => {
+  const params = new URLSearchParams();
+  if (date) params.append('date', date.toISOString());
+  params.append('currentMonth', currentMonth.toString());
+  const response = await fetch(`${BUDGET_URL}/${userId}/summary?${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch budget summary');
   }
   return response.json();
 };
@@ -131,6 +144,31 @@ export const deleteTask = async (taskId) => {
   });
   if (!response.ok) {
     throw new Error('Failed to delete task');
+  }
+  return response.json();
+};
+
+// Budget Income and Expense functions
+export const createIncome = async (userId, incomeData) => {
+  const response = await fetch(`${BUDGET_URL}/${userId}/income`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify(incomeData),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create income');
+  }
+  return response.json();
+};
+
+export const createExpense = async (userId, expenseData) => {
+  const response = await fetch(`${BUDGET_URL}/${userId}/expense`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify(expenseData),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create expense');
   }
   return response.json();
 };

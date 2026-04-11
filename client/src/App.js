@@ -1,12 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import GoalsList from './components/GoalsList';
 import GoalForm from './components/GoalForm';
 import Settings from './components/Settings';
+import BudgetModal from './components/BudgetModal';
+import { getBudgetSummary } from './api/api';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -16,6 +18,9 @@ function App() {
   });
   const [goalRefreshToken, setGoalRefreshToken] = useState(0);
   const [activePage, setActivePage] = useState('values');
+  const [budget, setBudget] = useState({ netBudget: 0, loading: true });
+  const [budgetPreview, setBudgetPreview] = useState(null);
+  const [showBudgetModal, setShowBudgetModal] = useState(false);
 
   const saveUserSession = (userData) => {
     localStorage.setItem('gol-user', JSON.stringify(userData));
@@ -26,6 +31,21 @@ function App() {
     localStorage.removeItem('gol-user');
     setUser(null);
   };
+
+  useEffect(() => {
+    if (user) {
+      const fetchBudget = async () => {
+        try {
+          const data = await getBudgetSummary(user.id, new Date(), true);
+          setBudget({ netBudget: data.netBudget, loading: false });
+        } catch (error) {
+          console.error('Failed to fetch budget:', error);
+          setBudget({ netBudget: 0, loading: false });
+        }
+      };
+      fetchBudget();
+    }
+  }, [user]);
 
   if (!user) {
     return (
@@ -48,10 +68,17 @@ function App() {
     <div className="App">
       <header className="app-header">
         <div className="header-left">
-          <div className="budget-field">
+          <button
+            className="budget-field"
+            onClick={() => setShowBudgetModal(true)}
+          >
             <span className="budget-icon">💰</span>
-            <span className="budget-amount">$2,450.00</span>
-          </div>
+            <span className="budget-amount">
+              {budget.loading
+                ? 'Loading...'
+                : `$${(budgetPreview !== null ? budgetPreview : budget.netBudget).toFixed(2)}`}
+            </span>
+          </button>
         </div>
         <div className="header-center">
           <img src="/gol-logo.png" className="app-logo" alt="Game of Life" />
@@ -132,6 +159,25 @@ function App() {
           📚
         </button>
       </footer>
+
+      {showBudgetModal && (
+        <BudgetModal
+          userId={user.id}
+          currentNetBudget={budget.netBudget}
+          onBudgetPreviewChange={setBudgetPreview}
+          onBudgetSaved={(formType, amount) =>
+            setBudget((prev) => ({
+              ...prev,
+              netBudget:
+                prev.netBudget + (formType === 'income' ? amount : -amount),
+            }))
+          }
+          onClose={() => {
+            setShowBudgetModal(false);
+            setBudgetPreview(null);
+          }}
+        />
+      )}
     </div>
   );
 }
