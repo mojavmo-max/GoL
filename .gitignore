@@ -4,3 +4,4 @@ bin/
 obj/
 temp_obj/
 temp_build/
+*.db

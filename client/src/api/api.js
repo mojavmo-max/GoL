@@ -5,6 +5,7 @@ import {
   GOALS_URL,
   TASKS_URL,
   BUDGET_URL,
+  ENERGY_URL,
 } from './config';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
@@ -144,6 +145,30 @@ export const deleteTask = async (taskId) => {
   });
   if (!response.ok) {
     throw new Error('Failed to delete task');
+  }
+  return response.json();
+};
+
+// Energy API functions
+export const createEnergyLevel = async (userId, energyData) => {
+  const response = await fetch(`${ENERGY_URL}/${userId}`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify(energyData),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create energy level');
+  }
+  return response.json();
+};
+
+export const getLatestEnergyLevel = async (userId) => {
+  const response = await fetch(`${ENERGY_URL}/${userId}/latest`);
+  if (response.status === 404) {
+    return null; // No energy level data found
+  }
+  if (!response.ok) {
+    throw new Error('Failed to fetch latest energy level');
   }
   return response.json();
 };

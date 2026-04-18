@@ -1,0 +1,239 @@
+/* Energy Modal Styles */
+.energy-modal .modal-content {
+  max-width: 500px;
+}
+
+.energy-form-container h3,
+.energy-breakdown h3 {
+  margin: 0 0 20px 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+}
+
+.energy-scores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.energy-scores-grid .form-group {
+  margin: 0;
+}
+
+.energy-scores-grid .form-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.energy-scores-grid .form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.energy-scores-grid .form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.energy-form-container .form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+
+.energy-form-container .form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cancel-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.submit-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.submit-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Energy Breakdown Styles */
+.energy-details {
+  text-align: center;
+}
+
+.overall-score {
+  margin-bottom: 24px;
+}
+
+.score-circle {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #3b82f6);
+  color: white;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.score-circle .score-value {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.score-circle .score-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.energy-scores-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.score-item .score-name {
+  font-weight: 500;
+  color: #374151;
+}
+
+.score-item .score-value {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1.1rem;
+}
+
+.energy-notes {
+  background: #fefce8;
+  border: 1px solid #fde047;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.energy-notes h4 {
+  margin: 0 0 8px 0;
+  color: #92400e;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.energy-notes p {
+  margin: 0;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.energy-timestamp {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.no-recent-data {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-recent-data p {
+  color: #6b7280;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.log-energy-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.log-energy-btn:hover {
+  background: #2563eb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .energy-scores-grid,
+  .energy-scores-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .score-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .score-circle .score-value {
+    font-size: 1.5rem;
+  }
+}

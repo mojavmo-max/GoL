@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared.DataAccess;
 
@@ -10,9 +11,11 @@ using Shared.DataAccess;
 namespace server.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418085823_AddEnergyLevelEntity")]
+    partial class AddEnergyLevelEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -160,23 +163,20 @@ namespace server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("EmotionalScore")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("EmotionalScore")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("MentalScore")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("MentalScore")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("OverallScore")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("PhysicalScore")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("PhysicalScore")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("RecordedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("SpiritualScore")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("SpiritualScore")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");

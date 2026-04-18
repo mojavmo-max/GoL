@@ -8,7 +8,9 @@ import GoalsList from './components/GoalsList';
 import GoalForm from './components/GoalForm';
 import Settings from './components/Settings';
 import BudgetModal from './components/BudgetModal';
+import EnergyModal from './components/EnergyModal';
 import { getBudgetSummary } from './api/api';
+import { getLatestEnergyLevel } from './api/api';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -21,6 +23,9 @@ function App() {
   const [budget, setBudget] = useState({ netBudget: 0, loading: true });
   const [budgetPreview, setBudgetPreview] = useState(null);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
+  const [energy, setEnergy] = useState({ level: null, loading: true });
+  const [showEnergyModal, setShowEnergyModal] = useState(false);
+  const [energyModalKey, setEnergyModalKey] = useState(0);
 
   const saveUserSession = (userData) => {
     localStorage.setItem('gol-user', JSON.stringify(userData));
@@ -30,6 +35,38 @@ function App() {
   const logout = () => {
     localStorage.removeItem('gol-user');
     setUser(null);
+  };
+
+  const handleEnergyUpdate = (newEnergyLevel) => {
+    setEnergy((prev) => ({
+      ...prev,
+      level: newEnergyLevel,
+    }));
+  };
+
+  const isEnergyRecent = (recordedAt) => {
+    if (!recordedAt) return false;
+    const recorded = new Date(recordedAt);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    return recorded >= oneHourAgo;
+  };
+
+  const getBatteryEmoji = (overallScore) => {
+    if (!overallScore) return '🔋';
+    const percentage = overallScore * 10; // Convert to 0-100 scale
+    if (percentage <= 20) return '🪫'; // Low battery
+    if (percentage <= 40) return '🔋'; // 25-40%
+    if (percentage <= 60) return '🔋'; // 40-60%
+    if (percentage <= 80) return '🔋'; // 60-80%
+    return '⚡'; // 80-100% - fully charged
+  };
+
+  const getEnergyStatusColor = (overallScore) => {
+    if (!overallScore) return '#6b7280'; // Gray for N/A
+    const percentage = overallScore * 10;
+    if (percentage > 80) return '#10b981'; // Green
+    if (percentage >= 20) return '#f59e0b'; // Yellow
+    return '#ef4444'; // Red
   };
 
   useEffect(() => {
@@ -44,6 +81,21 @@ function App() {
         }
       };
       fetchBudget();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      const fetchEnergy = async () => {
+        try {
+          const data = await getLatestEnergyLevel(user.id);
+          setEnergy({ level: data, loading: false });
+        } catch (error) {
+          console.error('Failed to fetch energy:', error);
+          setEnergy({ level: null, loading: false });
+        }
+      };
+      fetchEnergy();
     }
   }, [user]);
 
@@ -84,10 +136,34 @@ function App() {
           <img src="/gol-logo.png" className="app-logo" alt="Game of Life" />
         </div>
         <div className="header-right">
-          <div className="energy-field">
-            <span className="energy-icon">🔋</span>
-            <span className="energy-level">85%</span>
-          </div>
+          <button
+            className="energy-field"
+            onClick={() => {
+              setShowEnergyModal(true);
+              setEnergyModalKey((prev) => prev + 1);
+            }}
+            title="View Energy Levels"
+          >
+            <span className="energy-icon">
+              {getBatteryEmoji(energy.level?.overallScore)}
+            </span>
+            <span
+              className="energy-level"
+              style={{
+                color: getEnergyStatusColor(
+                  energy.level && isEnergyRecent(energy.level.recordedAt)
+                    ? energy.level.overallScore
+                    : null,
+                ),
+              }}
+            >
+              {energy.loading
+                ? 'Loading...'
+                : energy.level && isEnergyRecent(energy.level.recordedAt)
+                  ? `${energy.level.overallScore ? `${(energy.level.overallScore * 10).toFixed(0)}%` : 'N/A'}`
+                  : 'N/A'}
+            </span>
+          </button>
         </div>
       </header>
 
@@ -176,6 +252,16 @@ function App() {
             setShowBudgetModal(false);
             setBudgetPreview(null);
           }}
+        />
+      )}
+
+      {showEnergyModal && (
+        <EnergyModal
+          key={energyModalKey}
+          userId={user.id}
+          latestEnergy={energy.level}
+          onClose={() => setShowEnergyModal(false)}
+          onEnergyUpdated={handleEnergyUpdate}
         />
       )}
     </div>
