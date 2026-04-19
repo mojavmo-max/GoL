@@ -8,3 +8,5 @@ export const GOALS_URL = `${API_BASE_URL}/goals`;
 export const TASKS_URL = `${API_BASE_URL}/goals/task`;
 export const BUDGET_URL = `${API_BASE_URL}/budget`;
 export const ENERGY_URL = `${API_BASE_URL}/energy`;
+export const TRACKER_URL = `${API_BASE_URL}/tracker`;
+export const RESOURCES_URL = `${API_BASE_URL}/resources`;

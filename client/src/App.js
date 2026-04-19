@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
@@ -9,6 +9,8 @@ import GoalForm from './components/GoalForm';
 import Settings from './components/Settings';
 import BudgetModal from './components/BudgetModal';
 import EnergyModal from './components/EnergyModal';
+import TrackerPage from './components/TrackerPage';
+import ResourcesPage from './components/ResourcesPage';
 import { getBudgetSummary } from './api/api';
 import { getLatestEnergyLevel } from './api/api';
 
@@ -26,6 +28,7 @@ function App() {
   const [energy, setEnergy] = useState({ level: null, loading: true });
   const [showEnergyModal, setShowEnergyModal] = useState(false);
   const [energyModalKey, setEnergyModalKey] = useState(0);
+  const [showEnergyBanner, setShowEnergyBanner] = useState(false);
 
   const saveUserSession = (userData) => {
     localStorage.setItem('gol-user', JSON.stringify(userData));
@@ -44,12 +47,12 @@ function App() {
     }));
   };
 
-  const isEnergyRecent = (recordedAt) => {
+  const isEnergyRecent = useCallback((recordedAt) => {
     if (!recordedAt) return false;
     const recorded = new Date(recordedAt);
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     return recorded >= oneHourAgo;
-  };
+  }, []);
 
   const getBatteryEmoji = (overallScore) => {
     if (!overallScore) return '🔋';
@@ -67,6 +70,17 @@ function App() {
     if (percentage > 80) return '#10b981'; // Green
     if (percentage >= 20) return '#f59e0b'; // Yellow
     return '#ef4444'; // Red
+  };
+
+  const handleDismissEnergyBanner = () => {
+    localStorage.setItem('energy-banner-dismissed', new Date().toISOString());
+    setShowEnergyBanner(false);
+  };
+
+  const handleEnergyBannerClick = () => {
+    setShowEnergyModal(true);
+    setEnergyModalKey((prev) => prev + 1);
+    setShowEnergyBanner(false);
   };
 
   useEffect(() => {
@@ -98,6 +112,38 @@ function App() {
       fetchEnergy();
     }
   }, [user]);
+
+  // Check for energy banner every 5 minutes
+  useEffect(() => {
+    if (!user || energy.loading) return;
+
+    const checkEnergyBanner = () => {
+      const lastDismissed = localStorage.getItem('energy-banner-dismissed');
+      const dismissedTime = lastDismissed ? new Date(lastDismissed) : null;
+
+      // Don't show banner if dismissed within the last 15 minutes
+      if (
+        dismissedTime &&
+        Date.now() - dismissedTime.getTime() < 15 * 60 * 1000
+      ) {
+        setShowEnergyBanner(false);
+        return;
+      }
+
+      // Show banner if energy is stale (>1 hour old) or doesn't exist
+      const shouldShow =
+        !energy.level || !isEnergyRecent(energy.level.recordedAt);
+      setShowEnergyBanner(shouldShow);
+    };
+
+    // Check immediately
+    checkEnergyBanner();
+
+    // Check every 5 minutes
+    const interval = setInterval(checkEnergyBanner, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [user, energy, isEnergyRecent]);
 
   if (!user) {
     return (
@@ -167,6 +213,32 @@ function App() {
         </div>
       </header>
 
+      {showEnergyBanner && (
+        <div className="energy-banner">
+          <div className="energy-banner-content">
+            <span className="energy-banner-icon">🔋</span>
+            <span className="energy-banner-text">
+              It's been over an hour since you updated your energy levels. How
+              are you feeling?
+            </span>
+            <div className="energy-banner-actions">
+              <button
+                className="energy-banner-update-btn"
+                onClick={handleEnergyBannerClick}
+              >
+                Update Energy
+              </button>
+              <button
+                className="energy-banner-dismiss-btn"
+                onClick={handleDismissEnergyBanner}
+              >
+                Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main>
         {activePage === 'profile' ? (
           <UserProfile userId={user.id} />
@@ -181,15 +253,13 @@ function App() {
             onNavigateToProfile={() => setActivePage('profile')}
             onLogout={logout}
           />
+        ) : activePage === 'tracker' ? (
+          <TrackerPage userId={user.id} />
+        ) : activePage === 'resources' ? (
+          <ResourcesPage userId={user.id} />
         ) : (
           <div className="placeholder-card">
-            <h2>
-              {activePage === 'analytics'
-                ? 'Analytics'
-                : activePage === 'tracker'
-                  ? 'Tracker'
-                  : 'Resources'}
-            </h2>
+            <h2>{activePage === 'analytics' ? 'Analytics' : 'Resources'}</h2>
             <p>
               This page is a placeholder for the {activePage} section. Add
               content here later.

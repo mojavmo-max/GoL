@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared.DataAccess;
 
@@ -10,9 +11,11 @@ using Shared.DataAccess;
 namespace server.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260419001855_AddTrackerEntities")]
+    partial class AddTrackerEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -231,9 +234,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Time")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -338,11 +338,13 @@ namespace server.Migrations
 
             modelBuilder.Entity("Tracker.Models.Plan", b =>
                 {
-                    b.HasOne("Tracker.Models.DailyTracker", null)
+                    b.HasOne("Tracker.Models.DailyTracker", "DailyTracker")
                         .WithMany("Plans")
                         .HasForeignKey("DailyTrackerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("DailyTracker");
                 });
 
             modelBuilder.Entity("Values.Models.Task", b =>

@@ -1,4 +1,4 @@
-namespace Values.Models;
+namespace Energy.Models;
 
 public class EnergyLevel
 {

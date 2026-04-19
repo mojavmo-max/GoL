@@ -6,6 +6,8 @@ import {
   TASKS_URL,
   BUDGET_URL,
   ENERGY_URL,
+  TRACKER_URL,
+  RESOURCES_URL,
 } from './config';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
@@ -169,6 +171,55 @@ export const getLatestEnergyLevel = async (userId) => {
   }
   if (!response.ok) {
     throw new Error('Failed to fetch latest energy level');
+  }
+  return response.json();
+};
+
+// Tracker API functions
+export const getDailyTracker = async (userId, date) => {
+  const response = await fetch(`${TRACKER_URL}/${userId}/${date}`);
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error('Failed to fetch daily tracker');
+  }
+  return response.json();
+};
+
+export const saveDailyTracker = async (userId, trackerData) => {
+  const response = await fetch(`${TRACKER_URL}/${userId}`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify(trackerData),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to save daily tracker');
+  }
+  return response.json();
+};
+
+// Resources API functions
+export const getResources = async (
+  userId,
+  query,
+  resourceTypes,
+  page = 1,
+  pageSize = 10,
+) => {
+  const response = await fetch(`${RESOURCES_URL}/${userId}`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify({
+      query,
+      resourceTypes,
+      page,
+      pageSize,
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to fetch resources');
   }
   return response.json();
 };

@@ -1,4 +1,4 @@
-namespace Values.Api.Dtos;
+namespace Energy.Api.Dtos;
 
 public class EnergyLevelResponse
 {

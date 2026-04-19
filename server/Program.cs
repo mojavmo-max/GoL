@@ -5,6 +5,9 @@ using UserProfile.Api.Endpoints;
 using UserProfile.Services;
 using Values.Api.Endpoints;
 using Budget.Api.Endpoints;
+using Energy.Api.Endpoints;
+using Tracker.Api.Endpoints;
+using Resources.Api.Endpoints;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,5 +75,8 @@ app.MapAuthenticationEndpoints();
 app.MapProfileEndpoints();
 app.MapGoalsEndpoints();
 app.MapBudgetEndpoints();
+app.MapEnergyEndpoints();
+app.MapTrackerEndpoints();
+app.MapResourcesEndpoints();
 
 app.Run();

@@ -213,6 +213,103 @@ body {
   }
 }
 
+.energy-banner {
+  max-width: 1100px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+.energy-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.energy-banner-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.energy-banner-text {
+  flex: 1;
+  color: #92400e;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.energy-banner-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.energy-banner-update-btn {
+  background: #f59e0b;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.energy-banner-update-btn:hover {
+  background: #d97706;
+}
+
+.energy-banner-dismiss-btn {
+  background: transparent;
+  color: #92400e;
+  border: 1px solid #d97706;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.energy-banner-dismiss-btn:hover {
+  background: #d97706;
+  color: #ffffff;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .energy-banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .energy-banner-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .energy-banner-update-btn,
+  .energy-banner-dismiss-btn {
+    flex: 1;
+  }
+}
+
 .app-menu {
   display: flex;
   gap: 10px;
