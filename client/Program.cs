@@ -1,3 +1,4 @@
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +14,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.UseHttpsRedirection();
 
