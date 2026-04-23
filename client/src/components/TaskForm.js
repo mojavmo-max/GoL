@@ -39,18 +39,18 @@ const TaskForm = ({ goalId, userId, onTaskCreated, onCancel }) => {
     { value: 'Happiness', label: 'Happiness' },
   ];
 
-  const loadGoals = async () => {
+  const loadGoals = useCallback(async () => {
     try {
       const goalsData = await getGoals(userId);
       setGoals(goalsData);
     } catch (err) {
       console.error('Failed to load goals:', err);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     loadGoals();
-  }, [userId, loadGoals]);
+  }, [loadGoals]);
 
   const handleTaskChange = (e) => {
     const { name, value } = e.target;

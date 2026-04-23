@@ -26,7 +26,7 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     };
   }, []);
 
-  const loadGoals = async () => {
+  const loadGoals = useCallback(async () => {
     try {
       setLoading(true);
       const goalsData = await getGoals(userId);
@@ -50,11 +50,11 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, refreshToken]);
 
   useEffect(() => {
     loadGoals();
-  }, [userId, refreshToken, loadGoals]);
+  }, [loadGoals]);
 
   const handleTaskStatusUpdate = async (taskId, newStatus) => {
     try {
