@@ -50,7 +50,7 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, refreshToken]);
+  }, [userId]);
 
   useEffect(() => {
     loadGoals();
