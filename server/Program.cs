@@ -34,6 +34,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IModel3dGenerationService, Model3dGenerationService>();
 
+Directory.CreateDirectory("/app/src/Shared/Databases");
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "src", "Shared", "Databases", "userauth.db");
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
