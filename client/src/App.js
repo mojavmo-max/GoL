@@ -1,11 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState, useEffect, useCallback } from 'react';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import UserProfile from './components/UserProfile';
 import GoalsList from './components/GoalsList';
-import GoalForm from './components/GoalForm';
 import Settings from './components/Settings';
 import BudgetModal from './components/BudgetModal';
 import EnergyModal from './components/EnergyModal';

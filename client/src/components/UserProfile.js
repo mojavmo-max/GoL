@@ -10,7 +10,6 @@ export default function UserProfile({ userId }) {
     salary: '',
     relationshipStatus: '',
   });
-  const [file, setFile] = useState(null);
 
   useEffect(() => {
     if (userId) {

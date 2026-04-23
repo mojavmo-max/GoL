@@ -28,7 +28,7 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
 
   useEffect(() => {
     loadGoals();
-  }, [userId, refreshToken]);
+  }, [userId, refreshToken, loadGoals]);
 
   const loadGoals = async () => {
     try {

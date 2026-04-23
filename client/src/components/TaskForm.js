@@ -41,7 +41,7 @@ const TaskForm = ({ goalId, userId, onTaskCreated, onCancel }) => {
 
   useEffect(() => {
     loadGoals();
-  }, [userId]);
+  }, [userId, loadGoals]);
 
   const loadGoals = async () => {
     try {
