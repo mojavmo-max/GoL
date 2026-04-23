@@ -3,7 +3,7 @@ WORKDIR "/Server/src"
 COPY . .
 
 
-WORKDIR /src
+WORKDIR /Server
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
 
