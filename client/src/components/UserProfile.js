@@ -50,8 +50,7 @@ export default function UserProfile({ userId }) {
       model.lastName === form.lastName &&
       model.age === form.age &&
       model.salary === form.salary &&
-      model.relationshipStatus === form.relationshipStatus &&
-      !file
+      model.relationshipStatus === form.relationshipStatus
     ) {
       alert('No changes detected.');
       return;
