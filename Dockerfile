@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR "/Server/src"
+WORKDIR "/server/src"
 COPY . .
 
 
-WORKDIR /Server
+WORKDIR /server
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app/publish
 
