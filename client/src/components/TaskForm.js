@@ -39,10 +39,6 @@ const TaskForm = ({ goalId, userId, onTaskCreated, onCancel }) => {
     { value: 'Happiness', label: 'Happiness' },
   ];
 
-  useEffect(() => {
-    loadGoals();
-  }, [userId, loadGoals]);
-
   const loadGoals = async () => {
     try {
       const goalsData = await getGoals(userId);
@@ -51,6 +47,10 @@ const TaskForm = ({ goalId, userId, onTaskCreated, onCancel }) => {
       console.error('Failed to load goals:', err);
     }
   };
+
+  useEffect(() => {
+    loadGoals();
+  }, [userId, loadGoals]);
 
   const handleTaskChange = (e) => {
     const { name, value } = e.target;

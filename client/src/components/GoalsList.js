@@ -26,10 +26,6 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     };
   }, []);
 
-  useEffect(() => {
-    loadGoals();
-  }, [userId, refreshToken, loadGoals]);
-
   const loadGoals = async () => {
     try {
       setLoading(true);
@@ -55,6 +51,10 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadGoals();
+  }, [userId, refreshToken, loadGoals]);
 
   const handleTaskStatusUpdate = async (taskId, newStatus) => {
     try {
