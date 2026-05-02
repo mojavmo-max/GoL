@@ -248,6 +248,7 @@ function App() {
           />
         ) : activePage === 'settings' ? (
           <Settings
+            user={user}
             onNavigateToProfile={() => setActivePage('profile')}
             onLogout={logout}
           />
@@ -272,7 +273,7 @@ function App() {
           onClick={() => setActivePage('settings')}
           title="Settings"
         >
-          ⚙️
+          👤
         </button>
         <button
           className={`nav-btn ${activePage === 'analytics' ? 'active' : ''}`}
