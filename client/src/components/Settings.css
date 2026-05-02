@@ -12,11 +12,12 @@
   flex-direction: column;
   width: 100%;
   max-width: 600px;
-  height: 500px;
+  min-height: 500px;
+  height: auto;
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
-  overflow: hidden;
+  overflow: visible;
   padding: 32px 24px;
   position: relative;
 }
@@ -82,7 +83,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 24px 0;
+  margin: 8px 0;
 }
 
 .avatar-container {
