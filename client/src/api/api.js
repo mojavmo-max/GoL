@@ -8,6 +8,7 @@ import {
   ENERGY_URL,
   TRACKER_URL,
   RESOURCES_URL,
+  VALUES_URL,
 } from './config';
 
 const jsonHeaders = { 'Content-Type': 'application/json' };
@@ -18,7 +19,11 @@ export const register = async (email, password) => {
     headers: jsonHeaders,
     body: JSON.stringify({ email, password }),
   });
-  return response.json();
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(typeof data === 'string' ? data : (data?.title ?? `Error ${response.status}`));
+  }
+  return data;
 };
 
 export const login = async (email, password) => {
@@ -27,7 +32,11 @@ export const login = async (email, password) => {
     headers: jsonHeaders,
     body: JSON.stringify({ email, password }),
   });
-  return response.json();
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(typeof data === 'string' ? data : (data?.title ?? `Error ${response.status}`));
+  }
+  return data;
 };
 
 export const getProfile = async (userId) => {
@@ -245,6 +254,15 @@ export const createExpense = async (userId, expenseData) => {
   });
   if (!response.ok) {
     throw new Error('Failed to create expense');
+  }
+  return response.json();
+};
+
+// Values analytics functions
+export const getUserCategoryScores = async (userId) => {
+  const response = await fetch(`${VALUES_URL}/${userId}/category-scores`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch user category scores');
   }
   return response.json();
 };

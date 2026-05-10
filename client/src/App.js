@@ -9,6 +9,7 @@ import BudgetModal from './components/BudgetModal';
 import EnergyModal from './components/EnergyModal';
 import TrackerPage from './components/TrackerPage';
 import ResourcesPage from './components/ResourcesPage';
+import AnalyticsPage from './components/AnalyticsPage';
 import { getBudgetSummary } from './api/api';
 import { getLatestEnergyLevel } from './api/api';
 
@@ -60,14 +61,6 @@ function App() {
     if (percentage <= 60) return '🔋'; // 40-60%
     if (percentage <= 80) return '🔋'; // 60-80%
     return '⚡'; // 80-100% - fully charged
-  };
-
-  const getEnergyStatusColor = (overallScore) => {
-    if (!overallScore) return '#6b7280'; // Gray for N/A
-    const percentage = overallScore * 10;
-    if (percentage > 80) return '#10b981'; // Green
-    if (percentage >= 20) return '#f59e0b'; // Yellow
-    return '#ef4444'; // Red
   };
 
   const handleDismissEnergyBanner = () => {
@@ -177,7 +170,7 @@ function App() {
           </button>
         </div>
         <div className="header-center">
-          <img src="/gol-logo.png" className="app-logo" alt="Game of Life" />
+          <img src="/logo.png" className="app-logo" alt="Game of Life" />
         </div>
         <div className="header-right">
           <button
@@ -193,13 +186,6 @@ function App() {
             </span>
             <span
               className="energy-level"
-              style={{
-                color: getEnergyStatusColor(
-                  energy.level && isEnergyRecent(energy.level.recordedAt)
-                    ? energy.level.overallScore
-                    : null,
-                ),
-              }}
             >
               {energy.loading
                 ? 'Loading...'
@@ -256,6 +242,8 @@ function App() {
           <TrackerPage userId={user.id} />
         ) : activePage === 'resources' ? (
           <ResourcesPage userId={user.id} />
+        ) : activePage === 'analytics' ? (
+          <AnalyticsPage userId={user.id} />
         ) : (
           <div className="placeholder-card">
             <h2>{activePage === 'analytics' ? 'Analytics' : 'Resources'}</h2>

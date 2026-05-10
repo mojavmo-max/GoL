@@ -148,6 +148,26 @@ public static class GoalsHandler
         .WithName("DeleteGoal")
         .WithOpenApi();
 
+        // Get persisted category scores for user
+        app.MapGet("/values/{userId}/category-scores", async (int userId, UserDbContext db) =>
+        {
+            var scores = await db.UserCategoryScores
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.CategoryId)
+                .Select(s => new UserCategoryScoreResponse
+                {
+                    UserId = s.UserId,
+                    CategoryId = s.CategoryId,
+                    Score = s.Score,
+                    LevelNumber = s.LevelNumber
+                })
+                .ToListAsync();
+
+            return Results.Ok(scores);
+        })
+        .WithName("GetUserCategoryScores")
+        .WithOpenApi();
+
         // ===== TASK ENDPOINTS =====
 
         // Create task
@@ -188,16 +208,24 @@ public static class GoalsHandler
         // Update task status
         app.MapPut("/goals/task/{taskId}/status", async (int taskId, UpdateTaskStatusRequest req, UserDbContext db) =>
         {
-            var task = await db.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+            var task = await db.Tasks
+                .Include(t => t.Goal)
+                .FirstOrDefaultAsync(t => t.Id == taskId);
             if (task == null)
                 return Results.NotFound("Task not found");
 
             task.Status = req.Status;
             if (req.Status == TaskStatus.Completed)
                 task.CompletedAt = DateTime.UtcNow;
+            else
+                task.CompletedAt = null;
+
             task.UpdatedAt = DateTime.UtcNow;
 
             await db.SaveChangesAsync();
+
+            await RecalculateAndPersistUserCategoryScoreAsync(db, task.Goal.UserId, task.Goal.Category);
+
             return Results.Ok("Task status updated");
         })
         .WithName("UpdateTaskStatus")
@@ -236,17 +264,83 @@ public static class GoalsHandler
         // Delete task
         app.MapDelete("/goals/task/{taskId}", async (int taskId, UserDbContext db) =>
         {
-            var task = await db.Tasks.FirstOrDefaultAsync(t => t.Id == taskId);
+            var task = await db.Tasks
+                .Include(t => t.Goal)
+                .FirstOrDefaultAsync(t => t.Id == taskId);
             if (task == null)
                 return Results.NotFound("Task not found");
 
+            var userId = task.Goal.UserId;
+            var category = task.Goal.Category;
+
             db.Tasks.Remove(task);
             await db.SaveChangesAsync();
+
+            await RecalculateAndPersistUserCategoryScoreAsync(db, userId, category);
+
             return Results.Ok("Task deleted");
         })
         .WithName("DeleteTask")
         .WithOpenApi();
 
         return app;
+    }
+
+    private static async System.Threading.Tasks.Task RecalculateAndPersistUserCategoryScoreAsync(UserDbContext db, int userId, Value category)
+    {
+        var totalScore = await db.Tasks
+            .Where(t => t.Goal.UserId == userId
+                     && t.Goal.Category == category
+                     && t.Status == TaskStatus.Completed)
+            .SumAsync(t => (int?)t.Points) ?? 0;
+
+        var levelNumber = CalculateLevelNumber(totalScore);
+        var currentLevelScore = CalculateScoreWithinCurrentLevel(totalScore, levelNumber);
+        var categoryId = (int)category;
+
+        var existingScore = await db.UserCategoryScores
+            .FirstOrDefaultAsync(s => s.UserId == userId && s.CategoryId == categoryId);
+
+        if (existingScore == null)
+        {
+            db.UserCategoryScores.Add(new UserCategoryScore
+            {
+                UserId = userId,
+                CategoryId = categoryId,
+                Score = currentLevelScore,
+                LevelNumber = levelNumber
+            });
+        }
+        else
+        {
+            existingScore.Score = currentLevelScore;
+            existingScore.LevelNumber = levelNumber;
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static int CalculateLevelNumber(int score)
+    {
+        if (score <= 0)
+            return 0;
+
+        // XP_n = 50 * n^1.4, solve n from current score and floor to the attained level.
+        return (int)Math.Floor(Math.Pow(score / 50.0, 1.0 / 1.4));
+    }
+
+    private static int CalculateScoreWithinCurrentLevel(int totalScore, int currentLevel)
+    {
+        var currentLevelMinimumXp = CalculateMinimumXpForLevel(currentLevel);
+        return Math.Max(0, totalScore - currentLevelMinimumXp);
+    }
+
+    private static int CalculateMinimumXpForLevel(int level)
+    {
+        if (level <= 0)
+            return 0;
+
+        // Use the integer minimum XP needed to reach the requested level.
+        return (int)Math.Ceiling(50 * Math.Pow(level, 1.4));
     }
 }
