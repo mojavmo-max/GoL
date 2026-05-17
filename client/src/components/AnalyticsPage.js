@@ -1,6 +1,7 @@
 import './AnalyticsPage.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getUserCategoryScores } from '../api/api';
+import TaskDetailsModal from './TaskDetailsModal';
 
 const CATEGORY_NAMES = {
   0: 'Not Specified',
@@ -24,6 +25,7 @@ function AnalyticsPage({ userId }) {
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -57,11 +59,13 @@ function AnalyticsPage({ userId }) {
       );
 
       return {
+        categoryId: item.categoryId,
         categoryName: CATEGORY_NAMES[item.categoryId] || `Category ${item.categoryId}`,
         currentLevel,
         nextLevel,
         progressPercent,
         progressLabel: `${Math.round(progressPercent)}%`,
+        score: item.score,
       };
     });
   }, [scores]);
@@ -85,49 +89,66 @@ function AnalyticsPage({ userId }) {
   }
 
   return (
-    <div className="analytics-card">
-      <h2>Analytics</h2>
+    <>
+      <div className="analytics-card">
+        <h2>Analytics</h2>
 
-      {rows.length === 0 ? (
-        <p>No category score data yet.</p>
-      ) : (
-        <div className="analytics-list">
-          {rows.map((row) => (
-            <div
-              key={row.categoryName}
-              className="analytics-row"
-            >
-              <div className="analytics-row-main">
-                <div>
-                  <div className="analytics-category">{row.categoryName}</div>
-                </div>
-
-                <div>
-                  <div className="analytics-progress-head">
-                    <span className="analytics-progress-label">Level {row.currentLevel}</span>
-                    <span className="analytics-progress-value">Level {row.nextLevel}</span>
+        {rows.length === 0 ? (
+          <p>No category score data yet.</p>
+        ) : (
+          <div className="analytics-list">
+            {rows.map((row) => (
+              <div
+                key={row.categoryName}
+                className="analytics-row"
+              >
+                <div className="analytics-row-main">
+                  <div>
+                    <div className="analytics-category">{row.categoryName}</div>
                   </div>
-                  <div className="analytics-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(row.progressPercent)} aria-label={`${row.categoryName} progress`}>
-                    <div
-                      className="analytics-progress-fill"
-                      style={{ width: `${row.progressPercent}%` }}
-                    >
-                      <span className="analytics-progress-marker">{row.progressLabel}</span>
+
+                  <div>
+                    <div className="analytics-progress-head">
+                      <span className="analytics-progress-label">Level {row.currentLevel}</span>
+                      <span className="analytics-progress-value">Level {row.nextLevel}</span>
+                    </div>
+                    <div className="analytics-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(row.progressPercent)} aria-label={`${row.categoryName} progress`}>
+                      <div
+                        className="analytics-progress-fill"
+                        style={{ width: `${row.progressPercent}%` }}
+                      >
+                        <span className="analytics-progress-marker">{row.progressLabel}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="analytics-row-side">
-                <button className="analytics-details-btn" type="button" disabled>
-                  ...
-                </button>
+                <div className="analytics-row-side">
+                  <button
+                    className="analytics-details-btn"
+                    type="button"
+                    onClick={() => setSelectedCategory(row)}
+                    title="View task details"
+                  >
+                    ...
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {selectedCategory && (
+        <TaskDetailsModal
+          userId={userId}
+          categoryId={selectedCategory.categoryId}
+          categoryName={selectedCategory.categoryName}
+          level={selectedCategory.currentLevel}
+          totalScore={selectedCategory.score}
+          onClose={() => setSelectedCategory(null)}
+        />
       )}
-    </div>
+    </>
   );
 }
 

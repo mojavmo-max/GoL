@@ -1,9 +1,9 @@
 namespace Values.Models;
 
 /// <summary>
-/// Status of a task
+/// Shared status for goals and tasks
 /// </summary>
-public enum TaskStatus
+public enum Status
 {
     Pending,     // Not started
     InProgress,  // Currently working on it

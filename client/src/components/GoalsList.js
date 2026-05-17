@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { getGoals, getGoal, updateTaskStatus, deleteTask } from '../api/api';
+import { getGoals, getGoal, updateTaskStatus, deleteTask, updateGoal, deleteGoal } from '../api/api';
 import TaskForm from './TaskForm';
 import GoalForm from './GoalForm';
 import './GoalsList.css';
@@ -11,12 +11,19 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
   const [showTaskForm, setShowTaskForm] = useState(null);
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState('All');
+  const [openGoalEditMenu, setOpenGoalEditMenu] = useState(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
+      }
+      // Check if click is outside any goal edit menu container
+      const isInEditMenu = event.target.closest('.goal-edit-menu-container');
+      if (!isInEditMenu) {
+        setOpenGoalEditMenu(null);
       }
     };
 
@@ -76,6 +83,28 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     }
   };
 
+  const handleGoalStatusUpdate = async (goalId, newStatus) => {
+    try {
+      await updateGoal(userId, goalId, { status: newStatus });
+      await loadGoals(); // Reload to get updated data
+    } catch (err) {
+      console.error('Failed to update goal status:', err);
+      setError('Failed to update goal status');
+    }
+  };
+
+  const handleGoalDelete = async (goalId) => {
+    if (window.confirm('Are you sure you want to delete this goal? This action cannot be undone.')) {
+      try {
+        await deleteGoal(userId, goalId);
+        await loadGoals(); // Reload to get updated data
+      } catch (err) {
+        console.error('Failed to delete goal:', err);
+        setError('Failed to delete goal');
+      }
+    }
+  };
+
   const handleTaskCreated = () => {
     setShowTaskForm(null);
     loadGoals(); // Reload to show new task
@@ -96,6 +125,26 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
     setShowTaskForm('new'); // Special value to show task form without pre-selected goal
     setShowDropdown(false);
   };
+
+  const formatStatus = (status) => {
+    if (!status) return 'Pending';
+
+    const map = {
+      Pending: 'Pending',
+      InProgress: 'In Progress',
+      Completed: 'Completed',
+      Abandoned: 'Abandoned',
+      OnHold: 'On Hold',
+    };
+
+    return map[status] ?? status;
+  };
+
+  const filteredGoals = selectedStatusFilter === 'All'
+    ? goals
+    : goals.filter(goal => formatStatus(goal.status) === selectedStatusFilter);
+
+  const statusOptions = ['All', 'Pending', 'In Progress', 'Completed', 'Abandoned', 'On Hold'];
 
   if (loading) {
     return <div className="loading">Loading goals...</div>;
@@ -129,6 +178,18 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
         </div>
       </div>
 
+      <div className="status-filters">
+        {statusOptions.map((status) => (
+          <button
+            key={status}
+            className={`status-filter-btn ${selectedStatusFilter === status ? 'active' : ''}`}
+            onClick={() => setSelectedStatusFilter(status)}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
+
       {showGoalForm && (
         <GoalForm
           userId={userId}
@@ -148,18 +209,61 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
 
       {goals.length === 0 ? (
         <p>No goals yet. Create your first goal to get started!</p>
+      ) : filteredGoals.length === 0 ? (
+        <p>No goals with the selected status.</p>
       ) : (
-        goals.map((goal) => (
+        filteredGoals.map((goal) => (
           <div
             key={goal.id}
             className="goal-card"
             style={{ borderLeftColor: goal.colorHex || '#007bff' }}
           >
             <div className="goal-header">
-              <h3>{goal.category}</h3>
-              <span className="progress-score">
-                Progress: {goal.progressScore}%
-              </span>
+              <div className="goal-title-section">
+                <h3>{goal.category}</h3>
+                <span className="goal-status">
+                  Status: {formatStatus(goal.status)}
+                </span>
+              </div>
+              <div className="goal-edit-menu-container">
+                <button
+                  className="edit-btn"
+                  onClick={() => setOpenGoalEditMenu(openGoalEditMenu === goal.id ? null : goal.id)}
+                  title="Edit goal"
+                >
+                  ✏️
+                </button>
+                {openGoalEditMenu === goal.id && (
+                  <div className="goal-edit-menu">
+                    <div className="edit-menu-item">
+                      <label>Change Status:</label>
+                      <select
+                        className="goal-status-select"
+                        value={goal.status}
+                        onChange={(e) => {
+                          handleGoalStatusUpdate(goal.id, e.target.value);
+                          setOpenGoalEditMenu(null);
+                        }}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="InProgress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Abandoned">Abandoned</option>
+                        <option value="OnHold">On Hold</option>
+                      </select>
+                    </div>
+                    <button
+                      className="btn btn-danger btn-sm delete-goal-btn"
+                      onClick={() => {
+                        setOpenGoalEditMenu(null);
+                        handleGoalDelete(goal.id);
+                      }}
+                    >
+                      Delete Goal
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
             <p className="goal-description">{goal.description}</p>
             <div className="goal-actions">
@@ -209,10 +313,11 @@ const GoalsList = ({ userId, refreshToken, onGoalCreated }) => {
                             handleTaskStatusUpdate(task.id, e.target.value)
                           }
                         >
-                          <option value="NotStarted">Not Started</option>
+                          <option value="Pending">Pending</option>
                           <option value="InProgress">In Progress</option>
                           <option value="Completed">Completed</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Abandoned">Abandoned</option>
+                          <option value="OnHold">On Hold</option>
                         </select>
                         <button
                           className="btn btn-danger btn-sm"

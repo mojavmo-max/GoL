@@ -11,7 +11,7 @@ public class GoalResponse
     public int UserId { get; set; }
     public Value Category { get; set; }
     public string Description { get; set; } = null!;
-    public decimal ProgressScore { get; set; }
+    public Status Status { get; set; }
     public string? ColorHex { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -9,7 +9,7 @@ public class Task
     public int GoalId { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public TaskStatus Status { get; set; } = TaskStatus.Pending;
+    public Status Status { get; set; } = Status.Pending;
     public int Points { get; set; } = 10; // Points awarded on completion
     public int Priority { get; set; } = 1; // 1=Low, 2=Medium, 3=High
     public DateTime? DueDate { get; set; }

@@ -96,11 +96,19 @@ export const getGoal = async (userId, goalId) => {
 };
 
 export const updateGoal = async (userId, goalId, goalData) => {
+  // Fetch the existing goal data if only partial data is provided
+  let fullGoalData = goalData;
+  if (!goalData.title || !goalData.description) {
+    const existingGoal = await getGoal(userId, goalId);
+    fullGoalData = { ...existingGoal, ...goalData };
+  }
+
   const response = await fetch(`${GOALS_URL}/${userId}/${goalId}`, {
     method: 'PUT',
     headers: jsonHeaders,
-    body: JSON.stringify(goalData),
+    body: JSON.stringify(fullGoalData),
   });
+
   if (!response.ok) {
     throw new Error('Failed to update goal');
   }
@@ -263,6 +271,14 @@ export const getUserCategoryScores = async (userId) => {
   const response = await fetch(`${VALUES_URL}/${userId}/category-scores`);
   if (!response.ok) {
     throw new Error('Failed to fetch user category scores');
+  }
+  return response.json();
+};
+
+export const getTaskDetails = async (userId, categoryId) => {
+  const response = await fetch(`${GOALS_URL}/task-details/${userId}/${categoryId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch task details');
   }
   return response.json();
 };

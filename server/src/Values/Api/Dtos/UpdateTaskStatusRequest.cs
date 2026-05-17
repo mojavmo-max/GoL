@@ -1,4 +1,4 @@
-using TaskStatus = Values.Models.TaskStatus;
+using Status = Values.Models.Status;
 
 namespace Values.Api.Dtos;
 
@@ -7,5 +7,5 @@ namespace Values.Api.Dtos;
 /// </summary>
 public class UpdateTaskStatusRequest
 {
-    public TaskStatus Status { get; set; }
+    public Status Status { get; set; }
 }

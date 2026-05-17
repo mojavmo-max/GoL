@@ -9,7 +9,7 @@ public class Goal
     public int UserId { get; set; }
     public Value Category { get; set; }
     public string Description { get; set; } = null!;
-    public decimal ProgressScore { get; set; } = 0m; // 0-100
+    public Status Status { get; set; } = Status.Pending;
     public string? ColorHex { get; set; } // Optional: for UI display
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

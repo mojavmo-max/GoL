@@ -1,0 +1,260 @@
+.task-details-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.task-details-modal-overlay * {
+  box-sizing: border-box;
+}
+
+body:has(.task-details-modal-overlay) {
+  overflow: hidden;
+}
+
+.task-details-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+  background-color: #f0f0f0;
+}
+
+.task-details-header {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-header-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.category-header-info h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.level-badge {
+  background-color: #007bff;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.category-total-points {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.category-total-points strong {
+  color: #28a745;
+  font-size: 1.3rem;
+}
+
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  scrollbar-gutter: stable;
+}
+
+.goals-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.goal-box {
+  border-left: 4px solid #007bff;
+  background-color: #fafafa;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.goal-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.goal-header-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.goal-points {
+  background-color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.goal-points strong {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.tasks-container {
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px 0;
+}
+
+.completed-tasks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.completed-task-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.completed-task-item:last-child {
+  border-bottom: none;
+}
+
+.completed-task-item:hover {
+  background-color: #f9f9f9;
+}
+
+.task-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-name {
+  flex: 1;
+  font-weight: 500;
+  color: #333;
+}
+
+.task-points {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.task-date {
+  color: #999;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.no-tasks,
+.no-data,
+.loading,
+.error {
+  padding: 15px;
+  text-align: center;
+  color: #666;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+  .task-details-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .task-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .task-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .task-date {
+    font-size: 0.85rem;
+  }
+}

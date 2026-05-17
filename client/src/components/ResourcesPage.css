@@ -11,21 +11,25 @@
 
 .resources-header h2 {
   margin: 0 0 8px;
-  color: #0f172a;
+  color: #374151;
   font-size: 2rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  box-shadow: 0 6px 16px rgba(148, 163, 184, 0.14);
+  padding: 10px;
 }
 
 .resources-header p {
   margin: 0;
-  color: #64748b;
+  color: #374151;
   font-size: 1.1rem;
 }
 
 .resources-form {
-  background: #ffffff;
-  border-radius: 16px;
+  background: #d1d5db;
+  border-radius: 18px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   margin-bottom: 24px;
 }
 
@@ -43,15 +47,17 @@
 .query-input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border: 2px solid #9ca3af;
+  border-radius: 0;
+  background: #ffffff;
   font-size: 1rem;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
   transition: border-color 0.2s;
 }
 
 .query-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #78c9cf;
 }
 
 .resource-types {
@@ -80,20 +86,20 @@
   position: relative;
   height: 18px;
   width: 18px;
-  background-color: #fff;
+  background-color: #d1d5db;
   border: 2px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 0;
   margin-right: 8px;
   transition: all 0.2s;
 }
 
 .type-checkbox:hover .checkmark {
-  border-color: #3b82f6;
+  border-color: #78c9cf;
 }
 
 .type-checkbox input:checked ~ .checkmark {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
+  background-color: #78c9cf;
+  border-color: #78c9cf;
 }
 
 .checkmark:after {
@@ -119,10 +125,10 @@
 .search-btn {
   width: 100%;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #78c9cf 0%, #4aa7af 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -147,28 +153,28 @@
   border: 1px solid #fecaca;
   color: #dc2626;
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 0;
   margin-bottom: 24px;
   font-weight: 500;
 }
 
 .loading-message {
   text-align: center;
-  color: #6b7280;
+  color: #374151;
   font-size: 1.1rem;
   padding: 40px 0;
 }
 
 .resources-results {
-  background: #ffffff;
-  border-radius: 16px;
+  background: #d1d5db;
+  border-radius: 0;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .resources-results h3 {
   margin: 0 0 20px;
-  color: #0f172a;
+  color: #374151;
   font-size: 1.5rem;
 }
 
@@ -182,15 +188,15 @@
   display: flex;
   gap: 16px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
 }
 
 .resource-item:hover {
-  border-color: #3b82f6;
+  border-color: #78c9cf;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
@@ -203,18 +209,18 @@
 
 .resource-name {
   font-weight: 600;
-  color: #1f2937;
+  color: #374151;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .resource-name:hover {
-  color: #3b82f6;
+  color: #78c9cf;
 }
 
 .resource-type {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #374151;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -233,7 +239,7 @@
   gap: 8px;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #d1d5db;
 }
 
 .pagination-btn {
@@ -241,21 +247,21 @@
   border: 1px solid #d1d5db;
   background: white;
   color: #374151;
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.9rem;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  border-color: #3b82f6;
-  color: #3b82f6;
+  border-color: #78c9cf;
+  color: #78c9cf;
 }
 
 .pagination-btn.active {
-  background: #3b82f6;
+  background: #78c9cf;
   color: white;
-  border-color: #3b82f6;
+  border-color: #78c9cf;
 }
 
 .pagination-btn:disabled {
@@ -299,3 +305,8 @@
     padding: 20px;
   }
 }
+
+
+
+
+

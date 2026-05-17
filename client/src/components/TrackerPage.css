@@ -1,7 +1,7 @@
 .tracker-page {
-  background: #ffffff;
-  border-radius: 30px;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+  background: #d1d5db;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   padding: 28px;
   margin-top: 20px;
 }
@@ -18,12 +18,12 @@
 .tracker-title h2 {
   margin: 0;
   font-size: clamp(1.75rem, 2vw, 2.4rem);
-  color: #0f172a;
+  color: #374151;
 }
 
 .tracker-title p {
   margin: 10px 0 0;
-  color: #475569;
+  color: #374151;
 }
 
 .tracker-date-picker {
@@ -34,29 +34,30 @@
 
 .tracker-date-picker label {
   font-weight: 600;
-  color: #334155;
+  color: #374151;
 }
 
 .tracker-date-picker input {
   width: 200px;
   min-width: 180px;
   padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: #0f172a;
+  border-radius: 0;
+  border: 1px solid #9ca3af;
+  background: #ffffff;
+  color: #374151;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
 .tracker-status-row {
   margin-bottom: 16px;
-  color: #475569;
+  color: #374151;
   font-size: 0.95rem;
 }
 
 .tracker-sheet {
-  background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
+  background: linear-gradient(180deg, #d1d5db 0%, #d1d5db 100%);
+  border: 1px solid #d1d5db;
+  border-radius: 0;
   padding: 20px;
   box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
 }
@@ -76,7 +77,7 @@
 
 .tracker-row-header {
   font-weight: 700;
-  color: #334155;
+  color: #374151;
   border-bottom: 1px solid rgba(148, 163, 184, 0.25);
   padding-bottom: 12px;
   margin-bottom: 12px;
@@ -96,13 +97,13 @@
 .tracker-time,
 .tracker-description {
   width: 100%;
-  border-radius: 16px;
-  border: 1px solid #cbd5e1;
+  border-radius: 0;
+  border: 1px solid #d1d5db;
   padding: 14px 16px;
   font-size: 1rem;
   font-family: inherit;
-  color: #0f172a;
-  background: #ffffff;
+  color: #374151;
+  background: #d1d5db;
 }
 
 .tracker-time {
@@ -123,3 +124,8 @@
     max-width: 100%;
   }
 }
+
+
+
+
+

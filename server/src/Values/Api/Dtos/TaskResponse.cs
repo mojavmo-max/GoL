@@ -1,4 +1,4 @@
-using TaskStatus = Values.Models.TaskStatus;
+using Status = Values.Models.Status;
 
 namespace Values.Api.Dtos;
 
@@ -11,7 +11,7 @@ public class TaskResponse
     public int GoalId { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public TaskStatus Status { get; set; }
+    public Status Status { get; set; }
     public int Points { get; set; }
     public int Priority { get; set; }
     public DateTime? DueDate { get; set; }

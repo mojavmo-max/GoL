@@ -3,7 +3,7 @@ using Shared.DataAccess;
 using Values.Api.Dtos;
 using Values.Models;
 using Task = Values.Models.Task;
-using TaskStatus = Values.Models.TaskStatus;
+using Status = Values.Models.Status;
 
 namespace Values.Api.Endpoints;
 
@@ -27,7 +27,7 @@ public static class GoalsHandler
                 UserId = v.UserId,
                 Category = v.Category,
                 Description = v.Description,
-                ProgressScore = v.ProgressScore,
+                Status = v.Status,
                 ColorHex = v.ColorHex,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
@@ -57,7 +57,7 @@ public static class GoalsHandler
                 UserId = goal.UserId,
                 Category = goal.Category,
                 Description = goal.Description,
-                ProgressScore = goal.ProgressScore,
+                Status = goal.Status,
                 ColorHex = goal.ColorHex,
                 IsActive = goal.IsActive,
                 CreatedAt = goal.CreatedAt,
@@ -109,7 +109,7 @@ public static class GoalsHandler
                 UserId = newGoal.UserId,
                 Category = newGoal.Category,
                 Description = newGoal.Description,
-                ProgressScore = newGoal.ProgressScore,
+                Status = newGoal.Status,
                 IsActive = newGoal.IsActive
             });
         })
@@ -123,7 +123,7 @@ public static class GoalsHandler
             if (goal == null)
                 return Results.NotFound("Goal not found");
 
-            goal.ProgressScore = req.ProgressScore;
+            goal.Status = req.Status;
             goal.Description = req.Description;
             goal.IsActive = req.IsActive;
             goal.UpdatedAt = DateTime.UtcNow;
@@ -215,7 +215,7 @@ public static class GoalsHandler
                 return Results.NotFound("Task not found");
 
             task.Status = req.Status;
-            if (req.Status == TaskStatus.Completed)
+            if (req.Status == Status.Completed)
                 task.CompletedAt = DateTime.UtcNow;
             else
                 task.CompletedAt = null;
@@ -283,6 +283,83 @@ public static class GoalsHandler
         .WithName("DeleteTask")
         .WithOpenApi();
 
+        // Get task details view for a specific user and category
+        app.MapGet("/goals/task-details/{userId:int}/{categoryId:int}", async (int userId, int categoryId, UserDbContext db) =>
+        {
+            var connection = db.Database.GetDbConnection();
+            {
+                if (connection.State != System.Data.ConnectionState.Open)
+                    await connection.OpenAsync();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = @"
+                        SELECT
+                            GoalId,
+                            UserId,
+                            Category,
+                            GoalDescription,
+                            GoalStatus,
+                            ColorHex,
+                            IsActive,
+                            GoalCreatedAt,
+                            GoalUpdatedAt,
+                            CategoryScore,
+                            CategoryLevel,
+                            TaskId,
+                            TaskName,
+                            TaskDescription,
+                            TaskStatus,
+                            TaskPoints,
+                            TaskCompletedAt
+                        FROM vwTaskDetails
+                        WHERE UserId = @userId AND Category = @categoryId
+                        ORDER BY GoalId, TaskCompletedAt DESC";
+
+                    var userIdParam = command.CreateParameter();
+                    userIdParam.ParameterName = "@userId";
+                    userIdParam.Value = userId;
+                    command.Parameters.Add(userIdParam);
+
+                    var categoryIdParam = command.CreateParameter();
+                    categoryIdParam.ParameterName = "@categoryId";
+                    categoryIdParam.Value = categoryId;
+                    command.Parameters.Add(categoryIdParam);
+
+                    var results = new List<TaskDetailsResponse>();
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new TaskDetailsResponse
+                            {
+                                GoalId = reader.GetInt32(0),
+                                UserId = reader.GetInt32(1),
+                                Category = reader.GetInt32(2),
+                                GoalDescription = reader.GetString(3),
+                                GoalStatus = reader.GetInt32(4),
+                                ColorHex = reader.IsDBNull(5) ? null : reader.GetString(5),
+                                IsActive = reader.GetBoolean(6),
+                                GoalCreatedAt = reader.GetDateTime(7),
+                                GoalUpdatedAt = reader.GetDateTime(8),
+                                CategoryScore = reader.GetInt32(9),
+                                CategoryLevel = reader.GetInt32(10),
+                                TaskId = reader.IsDBNull(11) ? null : reader.GetInt32(11),
+                                TaskName = reader.IsDBNull(12) ? null : reader.GetString(12),
+                                TaskDescription = reader.IsDBNull(13) ? null : reader.GetString(13),
+                                TaskStatus = reader.IsDBNull(14) ? null : reader.GetInt32(14),
+                                TaskPoints = reader.IsDBNull(15) ? null : reader.GetInt32(15),
+                                TaskCompletedAt = reader.IsDBNull(16) ? null : reader.GetDateTime(16)
+                            });
+                        }
+                    }
+
+                    return Results.Ok(results);
+                }
+            }
+        })
+        .WithName("GetTaskDetails")
+        .WithOpenApi();
+
         return app;
     }
 
@@ -291,7 +368,7 @@ public static class GoalsHandler
         var totalScore = await db.Tasks
             .Where(t => t.Goal.UserId == userId
                      && t.Goal.Category == category
-                     && t.Status == TaskStatus.Completed)
+                     && t.Status == Status.Completed)
             .SumAsync(t => (int?)t.Points) ?? 0;
 
         var levelNumber = CalculateLevelNumber(totalScore);
